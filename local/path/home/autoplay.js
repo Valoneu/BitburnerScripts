@@ -1,3 +1,5 @@
+import { closeExtraTails, restoreLayout } from "./tailManager";
+
 /** @param {NS} ns */
 export async function main(ns) {
 	ns.ui.openTail();
@@ -19,6 +21,9 @@ export async function main(ns) {
 	for (const script of scripts) {
 		scriptStart(ns, script);
 	}
+
+	restoreLayout(ns);
+	closeExtraTails(ns);
 }
 
 /** @param {NS} ns */

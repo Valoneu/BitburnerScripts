@@ -4,7 +4,7 @@ const HACK = "hackShot.js";
 const GROW = "growShot.js";
 const WEAK = "weakShot.js";
 
-const HACK_PERCENT = 0.075;
+const HACK_PERCENT = 0.15;
 const OVERFILL = 1 + 0.5;
 const BATCH_LIMIT = 75000;
 
@@ -67,6 +67,7 @@ async function prepServer(ns, target, hosts) {
 		}
 	}
 	ns.print(`Threads: w ${wThreads}, g ${gThreads}, w ${wThreadsForGrow} \nRam: ${formatRam(batchRam)} Time: ${formatTime(weakenTime/1000)}`);
+	ns.print(`Batches: ${batchcount} Total Ram: ${formatRam(batchRam * batchcount)}`);
 	ns.print(`All launched.`);
 	await ns.sleep(weakenTime + 500);
 }
@@ -103,6 +104,6 @@ async function shootBatch(ns, target, hosts) {
 	}
 	ns.print(`Threads: h ${hackThreads}, w ${weaken1Threads}, h ${growThreads}, w ${weaken2Threads} \nRam: ${formatRam(batchRam)} Time: ${formatTime(weakenTime/1000)}`);
 	ns.print(`Expected money: ${formatMoney(expectedmoney)}`);
-	ns.print(`Batches: ${batchcount}`);
+	ns.print(`Batches: ${batchcount} Total Ram: ${formatRam(batchRam * batchcount)}`);
 	await ns.sleep(weakenTime + 500);
 }

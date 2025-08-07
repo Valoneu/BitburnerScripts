@@ -21,13 +21,13 @@ export async function attemptAllContracts(ns) {
 
 /** @param {NS} ns */
 export function getContracts(ns) {
-	const allServers = ['home'];
+	const allServers = ["home"];
 	for (const server of allServers) {
-		ns.scan(server).forEach(s => !allServers.includes(s) && allServers.push(s));
+		ns.scan(server).forEach((s) => !allServers.includes(s) && allServers.push(s));
 	}
 
-	return allServers.flatMap(host =>
-		ns.ls(host, ".cct").map(file => ({
+	return allServers.flatMap((host) =>
+		ns.ls(host, ".cct").map((file) => ({
 			host: host,
 			file: file,
 			type: ns.codingcontract.getContractType(file, host),
@@ -60,9 +60,10 @@ export async function attemptContract(ns, contract) {
 
 export const solvers = {
 	"Algorithmic Stock Trader I": (data) => {
-		let maxCur = 0, maxSoFar = 0;
+		let maxCur = 0,
+			maxSoFar = 0;
 		for (let i = 1; i < data.length; ++i) {
-			maxCur = Math.max(0, maxCur += data[i] - data[i - 1]);
+			maxCur = Math.max(0, (maxCur += data[i] - data[i - 1]));
 			maxSoFar = Math.max(maxCur, maxSoFar);
 		}
 		return maxSoFar;
@@ -77,8 +78,10 @@ export const solvers = {
 	},
 
 	"Algorithmic Stock Trader III": (data) => {
-		let hold1 = -Infinity, hold2 = -Infinity;
-		let release1 = 0, release2 = 0;
+		let hold1 = -Infinity,
+			hold2 = -Infinity;
+		let release1 = 0,
+			release2 = 0;
 		for (const price of data) {
 			release2 = Math.max(release2, hold2 + price);
 			hold2 = Math.max(hold2, release1 - price);
@@ -89,7 +92,8 @@ export const solvers = {
 	},
 
 	"Algorithmic Stock Trader IV": (data) => {
-		const k = data[0], prices = data[1];
+		const k = data[0],
+			prices = data[1];
 		if (k === 0 || prices.length < 2) return 0;
 		if (k >= prices.length / 2) {
 			let profit = 0;
@@ -120,15 +124,20 @@ export const solvers = {
 
 	"Array Jumping Game II": (data) => {
 		if (data.length <= 1) return 0;
-		let jumps = 0, currentEnd = 0, farthest = 0;
+		let jumps = 0,
+			currentEnd = 0,
+			farthest = 0;
+
 		for (let i = 0; i < data.length - 1; i++) {
 			farthest = Math.max(farthest, i + data[i]);
+
 			if (i === currentEnd) {
+				if (!(farthest > i)) return 0;
 				jumps++;
 				currentEnd = farthest;
 			}
 		}
-		return jumps;
+		return currentEnd >= data.length - 1 ? jumps : 0;
 	},
 
 	"Unique Paths in a Grid I": (data) => {
@@ -159,27 +168,31 @@ export const solvers = {
 
 	"Generate IP Addresses": (data) => {
 		const result = [];
-		for (let a = 1; a <= 3; a++) for (let b = 1; b <= 3; b++) for (let c = 1; c <= 3; c++) for (let d = 1; d <= 3; d++) {
-			if (a + b + c + d !== data.length) continue;
-			const A = data.substring(0, a);
-			const B = data.substring(a, a + b);
-			const C = data.substring(a + b, a + b + c);
-			const D = data.substring(a + b + c);
-			const parts = [A, B, C, D];
-			if (parts.every(p => p.length > 0 && (p.length === 1 || p[0] !== '0') && parseInt(p) <= 255)) {
-				result.push(parts.join('.'));
-			}
-		}
+		for (let a = 1; a <= 3; a++)
+			for (let b = 1; b <= 3; b++)
+				for (let c = 1; c <= 3; c++)
+					for (let d = 1; d <= 3; d++) {
+						if (a + b + c + d !== data.length) continue;
+						const A = data.substring(0, a);
+						const B = data.substring(a, a + b);
+						const C = data.substring(a + b, a + b + c);
+						const D = data.substring(a + b + c);
+						const parts = [A, B, C, D];
+						if (parts.every((p) => p.length > 0 && (p.length === 1 || p[0] !== "0") && parseInt(p) <= 255)) {
+							result.push(parts.join("."));
+						}
+					}
 		return result;
 	},
 
 	"Sanitize Parentheses in Expression": (data) => {
 		// This is a complex DFS solution. It's kept as is for correctness and readability.
-		let left = 0, right = 0;
+		let left = 0,
+			right = 0;
 		const res = [];
 		for (const char of data) {
-			if (char === '(') left++;
-			else if (char === ')') {
+			if (char === "(") left++;
+			else if (char === ")") {
 				left > 0 ? left-- : right++;
 			}
 		}
@@ -190,10 +203,10 @@ export const solvers = {
 				}
 				return;
 			}
-			if (s[index] === '(') {
+			if (s[index] === "(") {
 				if (left > 0) dfs(pair, index + 1, left - 1, right, s, solution, res);
 				dfs(pair + 1, index + 1, left, right, s, solution + s[index], res);
-			} else if (s[index] === ')') {
+			} else if (s[index] === ")") {
 				if (right > 0) dfs(pair, index + 1, left, right - 1, s, solution, res);
 				if (pair > 0) dfs(pair - 1, index + 1, left, right, s, solution + s[index], res);
 			} else {
@@ -205,7 +218,8 @@ export const solvers = {
 	},
 
 	"Unique Paths in a Grid II": (data) => {
-		const m = data.length, n = data[0].length;
+		const m = data.length,
+			n = data[0].length;
 		if (data[0][0] === 1 || data[m - 1][n - 1] === 1) return 0;
 		const dp = Array(n).fill(0);
 		dp[0] = 1;
@@ -295,7 +309,10 @@ export const solvers = {
 
 	"Spiralize Matrix": (data) => {
 		const result = [];
-		let top = 0, bottom = data.length - 1, left = 0, right = data[0].length - 1;
+		let top = 0,
+			bottom = data.length - 1,
+			left = 0,
+			right = data[0].length - 1;
 		while (top <= bottom && left <= right) {
 			for (let i = left; i <= right; i++) result.push(data[top][i]);
 			top++;
@@ -324,17 +341,24 @@ export const solvers = {
 
 	"Shortest Path in a Grid": (data) => {
 		// BFS solution, kept for correctness.
-		const m = data.length, n = data[0].length;
+		const m = data.length,
+			n = data[0].length;
 		if (data[0][0] === 1 || data[m - 1][n - 1] === 1) return "";
 		const queue = [[0, 0, ""]];
 		const visited = Array.from({ length: m }, () => Array(n).fill(false));
 		visited[0][0] = true;
-		const dirs = [[-1, 0, 'U'], [1, 0, 'D'], [0, -1, 'L'], [0, 1, 'R']];
+		const dirs = [
+			[-1, 0, "U"],
+			[1, 0, "D"],
+			[0, -1, "L"],
+			[0, 1, "R"],
+		];
 		while (queue.length > 0) {
 			const [r, c, path] = queue.shift();
 			if (r === m - 1 && c === n - 1) return path;
 			for (const [dr, dc, move] of dirs) {
-				const nr = r + dr, nc = c + dc;
+				const nr = r + dr,
+					nc = c + dc;
 				if (nr >= 0 && nr < m && nc >= 0 && nc < n && !visited[nr][nc] && data[nr][nc] === 0) {
 					visited[nr][nc] = true;
 					queue.push([nr, nc, path + move]);
@@ -346,40 +370,40 @@ export const solvers = {
 
 	"HammingCodes: Integer to Encoded Binary": (data) => {
 		// Complex bit manipulation, kept as is.
-		const bits = data.toString(2).split('').map(Number);
+		const bits = data.toString(2).split("").map(Number);
 		const n = bits.length;
 		let p = 0;
 		while (2 ** p < n + p + 1) p++;
 		const hamming = Array(n + p);
-		for (let i = 0; i < p; i++) hamming[(2 ** i) - 1] = 'P';
+		for (let i = 0; i < p; i++) hamming[2 ** i - 1] = "P";
 		let bitIndex = 0;
 		for (let i = 0; i < hamming.length; i++) {
-			if (hamming[i] !== 'P') {
+			if (hamming[i] !== "P") {
 				hamming[i] = bits[bitIndex++];
 			}
 		}
 		for (let i = 0; i < p; i++) {
-			const pIndex = (2 ** i) - 1;
+			const pIndex = 2 ** i - 1;
 			let parity = 0;
 			for (let j = pIndex; j < hamming.length; j++) {
 				if (((j + 1) & (pIndex + 1)) !== 0) {
 					if (hamming[j] === 1) parity++;
 				}
 			}
-			hamming[pIndex] = (parity % 2);
+			hamming[pIndex] = parity % 2;
 		}
 		let overallParity = hamming.reduce((acc, val) => acc + (val === 1), 0) % 2;
-		return overallParity.toString() + hamming.join('');
+		return overallParity.toString() + hamming.join("");
 	},
 
 	"HammingCodes: Encoded Binary to Integer": (data) => {
 		// Complex bit manipulation, kept as is.
-		const hamming = data.split('').map(Number);
+		const hamming = data.split("").map(Number);
 		const overallParity = hamming.shift();
 		const p = Math.log2(hamming.length + 1);
 		let errorPos = 0;
 		for (let i = 0; i < p; i++) {
-			const pIndex = (2 ** i) - 1;
+			const pIndex = 2 ** i - 1;
 			let parity = 0;
 			for (let j = pIndex; j < hamming.length; j++) {
 				if (((j + 1) & (pIndex + 1)) !== 0) {
@@ -402,7 +426,7 @@ export const solvers = {
 				result.push(hamming[i]);
 			}
 		}
-		return parseInt(result.join(''), 2);
+		return parseInt(result.join(""), 2);
 	},
 
 	"Proper 2-Coloring of a Graph": ([N, edges]) => {
@@ -470,8 +494,9 @@ export const solvers = {
 	},
 
 	"Compression III: LZ Compression": (plain) => {
-		// Extremely complex DP problem, kept for correctness.
-		let N = plain.length; let dp = Array(N + 1).fill(null); dp[0] = "";
+		let N = plain.length;
+		let dp = Array(N + 1).fill(null);
+		dp[0] = "";
 		for (let i = 0; i <= N; ++i) {
 			if (dp[i] === null) continue;
 			for (let L = 1; L <= 9 && i + L <= N; ++L) {
@@ -490,7 +515,7 @@ export const solvers = {
 		let result = dp[N];
 		for (let i = 0; i <= N; ++i) {
 			if (dp[i] === null) continue;
-			const s = dp[i] + '0';
+			const s = dp[i] + "0";
 			if (result === null || s.length < result.length) result = s;
 		}
 		return result;
@@ -498,34 +523,41 @@ export const solvers = {
 
 	"Encryption I: Caesar Cipher": ([plaintext, shift]) => {
 		const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-		return plaintext.split('').map(char => {
-			if (char === ' ') return ' ';
-			const index = alphabet.indexOf(char);
-			return alphabet[(index - shift + 26) % 26];
-		}).join('');
+		return plaintext
+			.split("")
+			.map((char) => {
+				if (char === " ") return " ";
+				const index = alphabet.indexOf(char);
+				return alphabet[(index - shift + 26) % 26];
+			})
+			.join("");
 	},
 
 	"Encryption II: Vigenère Cipher": ([plaintext, keyword]) => {
 		const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-		return plaintext.split('').map((char, i) => {
-			const plainIndex = alphabet.indexOf(char);
-			const keyIndex = alphabet.indexOf(keyword[i % keyword.length]);
-			return alphabet[(plainIndex + keyIndex) % 26];
-		}).join('');
+		return plaintext
+			.split("")
+			.map((char, i) => {
+				const plainIndex = alphabet.indexOf(char);
+				const keyIndex = alphabet.indexOf(keyword[i % keyword.length]);
+				return alphabet[(plainIndex + keyIndex) % 26];
+			})
+			.join("");
 	},
-	
+
 	"Square Root": (data) => {
-        // Binary search with BigInt, kept as is.
-        const n = BigInt(data);
-        if (n < 0n) return 0;
-        if (n === 0n) return 0;
-        let x0 = n, x1 = (n + 1n) / 2n;
-        while (x1 < x0) {
-            x0 = x1;
-            x1 = (x0 + n / x0) / 2n;
-        }
-        const x0s = x0 * x0;
-        const x1s = (x0 + 1n) * (x0 + 1n);
-        return (n - x0s < x1s - n ? x0 : x0 + 1n).toString();
-    }
+		// Binary search with BigInt, kept as is.
+		const n = BigInt(data);
+		if (n < 0n) return 0;
+		if (n === 0n) return 0;
+		let x0 = n,
+			x1 = (n + 1n) / 2n;
+		while (x1 < x0) {
+			x0 = x1;
+			x1 = (x0 + n / x0) / 2n;
+		}
+		const x0s = x0 * x0;
+		const x1s = (x0 + 1n) * (x0 + 1n);
+		return (n - x0s < x1s - n ? x0 : x0 + 1n).toString();
+	},
 };

@@ -1,0 +1,68 @@
+[
+  {
+    "filename": "controllerIpvgo.js",
+    "args": [],
+    "tail": {
+      "x": 1391,
+      "y": 692,
+      "width": 417,
+      "height": 565,
+      "fontSize": 15
+    }
+  },
+  {
+    "filename": "scan-stats.js",
+    "args": [],
+    "tail": {
+      "x": 1682,
+      "y": 1.3999999999999773,
+      "width": 720,
+      "height": 688,
+      "fontSize": 15
+    }
+  },
+  {
+    "filename": "clickMap.js",
+    "args": [],
+    "tail": {
+      "x": 1389,
+      "y": 1.3999999999999773,
+      "width": 294,
+      "height": 688,
+      "fontSize": 15
+    }
+  },
+  {
+    "filename": "controllerContracts.js",
+    "args": [],
+    "tail": {
+      "x": 1809,
+      "y": 887,
+      "width": 322,
+      "height": 368,
+      "fontSize": 15
+    }
+  },
+  {
+    "filename": "controllerHack.js",
+    "args": [],
+    "tail": {
+      "x": 1808,
+      "y": 691,
+      "width": 319,
+      "height": 192,
+      "fontSize": 15
+    }
+  },
+  {
+    "filename": "tailManager.js",
+    "args": [],
+    "tail": {
+      "x": 609,
+      "y": 148.39999999999998,
+      "width": 434,
+      "height": 575,
+      "fontSize": 15
+    }
+  }
+]
