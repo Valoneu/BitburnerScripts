@@ -495,30 +495,37 @@ export const solvers = {
 
 	"Compression III: LZ Compression": (plain) => {
 		let N = plain.length;
-		let dp = Array(N + 1).fill(null);
-		dp[0] = "";
+		let dp = Array.from({ length: N + 1 }, () => [null, null]);
+		dp[0][0] = "";
+
 		for (let i = 0; i <= N; ++i) {
-			if (dp[i] === null) continue;
-			for (let L = 1; L <= 9 && i + L <= N; ++L) {
-				const s = dp[i] + L + plain.substring(i, i + L);
-				if (dp[i + L] === null || s.length < dp[i + L].length) dp[i + L] = s;
-			}
-			for (let B = 1; B <= i && B <= 9; ++B) {
-				let L = 0;
-				while (i + L < N && plain[i + L] === plain[i - B + L] && L < 9) {
-					++L;
-					const s = dp[i] + `0${L}${B}`;
-					if (dp[i + L] === null || s.length < dp[i + L].length) dp[i + L] = s;
+			for (let t = 0; t <= 1; ++t) {
+				if (dp[i][t] === null) continue;
+
+				if (t === 0) {
+					for (let L = 1; L <= 9 && i + L <= N; ++L) {
+						const s = dp[i][t] + L + plain.substring(i, i + L);
+						if (dp[i + L][1] === null || s.length < dp[i + L][1].length) dp[i + L][1] = s;
+					}
+				} else {
+					for (let B = 1; B <= 9 && B <= i; ++B) {
+						let L = 0;
+						while (i + L < N && plain[i + L] === plain[i - B + L] && L < 9) {
+							++L;
+							const s = dp[i][t] + `${L}${B}`;
+							if (dp[i + L][0] === null || s.length < dp[i + L][0].length) dp[i + L][0] = s;
+						}
+					}
 				}
+
+				const s = dp[i][t] + "0";
+				if (dp[i][1 - t] === null || s.length < dp[i][1 - t].length) dp[i][1 - t] = s;
 			}
 		}
-		let result = dp[N];
-		for (let i = 0; i <= N; ++i) {
-			if (dp[i] === null) continue;
-			const s = dp[i] + "0";
-			if (result === null || s.length < result.length) result = s;
-		}
-		return result;
+
+		let res0 = dp[N][0],
+			res1 = dp[N][1];
+		return !res0 ? res1 : !res1 ? res0 : res0.length <= res1.length ? res0 : res1;
 	},
 
 	"Encryption I: Caesar Cipher": ([plaintext, shift]) => {

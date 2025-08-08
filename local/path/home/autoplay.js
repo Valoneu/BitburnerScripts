@@ -15,6 +15,7 @@ export async function main(ns) {
 		"controllerIpvgo.js",
 		"controllerStocks.js",
 		"scan-stats.js",
+		"clickMap.js",
 		"hud.js"
 	];
 
@@ -22,8 +23,8 @@ export async function main(ns) {
 		scriptStart(ns, script);
 	}
 
-	restoreLayout(ns);
-	closeExtraTails(ns);
+	await restoreLayout(ns);
+	await closeExtraTails(ns);
 }
 
 /** @param {NS} ns */

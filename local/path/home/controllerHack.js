@@ -4,7 +4,7 @@ const HACK = "hackShot.js";
 const GROW = "growShot.js";
 const WEAK = "weakShot.js";
 
-const HACK_PERCENT = 0.15;
+const HACK_PERCENT = 0.10;
 const OVERFILL = 1 + 0.5;
 const BATCH_LIMIT = 75000;
 

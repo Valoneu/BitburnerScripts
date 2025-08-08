@@ -12,16 +12,20 @@ export async function main(ns) {
 		doc.querySelectorAll(".HUD_el").forEach((e) => e.remove());
 	};
 
+	ns.atExit(removeHUDElements);
+
 	while (true) {
 		try {
 			const theme = ns.ui.getTheme();
+			const player = ns.getPlayer();
 
 			// --- Build a list of stats to display ---
 			const stats = [];
-			const player = ns.getPlayer();
-
-			// Helper to add a stat to the list
 			const addStat = (header, value, color) => stats.push({ header, value, color });
+			
+			// --- Intelligence Bonus (at the top) ---
+			const intBonus = (Math.pow(player.skills.intelligence, 0.8) / 500) * 100;
+			addStat("Int Bonus", `+${intBonus.toFixed(4)}%`, theme.int);
 
 			// --- Player & General Info ---
 			addStat("City", player.city, theme.cha);
@@ -42,13 +46,12 @@ export async function main(ns) {
 			let totalRam = 0, usedRam = 0;
 			for (const server of Servers) {
 				usedRam += ns.getServerUsedRam(server);
-                totalRam += ns.getServerMaxRam(server);
+				totalRam += ns.getServerMaxRam(server);
 			}
 			addStat("Free RAM", `${ns.formatRam(totalRam - usedRam, 1)}`, theme.secondary);
 
 			// --- Calculate Best Hack Target ---
-			let bestTarget = "N/A",
-				bestScore = 0;
+			let bestTarget = "N/A", bestScore = 0;
 			const purchasedSet = new Set(ns.getPurchasedServers());
 			const servers = scanAll(ns).filter((s) => s !== "home" && !purchasedSet.has(s) && ns.hasRootAccess(s) && ns.getServerRequiredHackingLevel(s) <= ns.getHackingLevel());
 			for (const server of servers) {
@@ -68,9 +71,7 @@ export async function main(ns) {
 					addStat("Pending Augs", purchased - installed, theme.cha);
 					addStat("Playtime", ns.tFormat(Date.now() - ns.singularity.getResetInfo().lastAugReset), theme.cha);
 				}
-			} catch {
-				/* Singularity API not available */
-			}
+			} catch {}
 
 			// --- Stock Market Profit (if unlocked) ---
 			try {
@@ -84,9 +85,7 @@ export async function main(ns) {
 					const profitColor = totalProfit >= 0 ? theme.money : theme.hp;
 					addStat("Stock Profit", `${totalProfit >= 0 ? "+" : ""}$${ns.formatNumber(totalProfit)}`, profitColor);
 				}
-			} catch {
-				/* Stock API not available */
-			}
+			} catch {}
 
 			// --- Go Opponent (if in a game) ---
 			try {
@@ -94,9 +93,7 @@ export async function main(ns) {
 				if (opponent && opponent !== "No AI") {
 					addStat("Go Opponent", opponent, theme.int);
 				}
-			} catch {
-				/* Go API not available */
-			}
+			} catch {}
 
 			// --- Hacknet Info ---
 			try {
@@ -111,9 +108,7 @@ export async function main(ns) {
 						addStat("Hacknet", `$${ns.formatNumber(production, 2)}/sec`, theme.money);
 					}
 				}
-			} catch {
-				/* Hacknet API not available */
-			}
+			} catch {}
 
 			// --- Corporation Info ---
 			try {
@@ -122,9 +117,7 @@ export async function main(ns) {
 					const profit = corp.revenue - corp.expenses;
 					addStat("Corp Profit", `$${ns.formatNumber(profit, 2)}/sec`, theme.money);
 				}
-			} catch {
-				/* Corporation API not available */
-			}
+			} catch {}
 
 			// --- Karma & Kills ---
 			addStat("Karma", ns.formatNumber(ns.heart.break(), 1), theme.hp);
@@ -140,27 +133,20 @@ export async function main(ns) {
 						addStat("Gang Inc", `$${ns.formatNumber(gangInfo.moneyGainRate * 5, 2)}/sec`, theme.money);
 					}
 				}
-			} catch {
-				/* Gang API not available */
-			}
+			} catch {}
 
 			// --- Render the stats ---
 			removeHUDElements(); // Clear old stats
 
 			for (const stat of stats) {
-				// Create header
 				const headerEl = `<span class="HUD_el" style="color: ${stat.color}">${stat.header}</span><br class="HUD_el">`;
 				hook0.insertAdjacentHTML("beforeend", headerEl);
-				// Create value
 				const valueEl = `<span class="HUD_el" style="color: ${stat.color}">${stat.value}</span><br class="HUD_el">`;
 				hook1.insertAdjacentHTML("beforeend", valueEl);
 			}
 		} catch (err) {
-			ns.print("ERROR: Update Skipped: " + String(err));
+			ns.print("ERROR: HUD update skipped: " + String(err));
 		}
-
-		// This is the key to making it disappear when the script is killed
-		ns.atExit(removeHUDElements);
 		await ns.sleep(1000 / (75 / 16));
 	}
 }
