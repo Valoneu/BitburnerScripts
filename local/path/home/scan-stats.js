@@ -45,7 +45,7 @@ export async function main(ns) {
 			const lvlNeeded = ns.getServerRequiredHackingLevel(server);
 			const score = getScore(ns, server);
 			const time = getServerWeakenTime(ns, server) / 1000;
-
+			
 			const moneyPart1 = colorText(formatMoney(money), money, moneyMax);
 			const moneyPart2 = colorText(formatMoney(moneyMax), moneyMax, bestServerMaxMoney);
 			const secPart1 = colorTextInv(sec.toFixed(1), sec, 100 - secMin);
@@ -57,13 +57,14 @@ export async function main(ns) {
 				padAroundSlash(secPart1, secPart2, widths.sec),
 				center(colorTextInv(lvlNeeded.toString(), lvlNeeded, playerHackLvl), widths.lvl),
 				center(colorText(score.toFixed(0), score, bestServerScore), widths.score),
-				center(colorTextInv(time.toFixed(1), time, 600), widths.time)
+				center(colorTextInv(time.toFixed(1), time, 3 * 60), widths.time)
 			];
 
 			ns.printf(cols.join("│"));
 		}
 		await ns.sleep(1000);
 
+		ns.kill
 	}
 }
 

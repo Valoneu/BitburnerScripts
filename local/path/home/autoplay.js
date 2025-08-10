@@ -10,6 +10,7 @@ export async function main(ns) {
 		"controllerRoot.js", 
 		"controllerServers.js", 
 		"controllerHack.js",
+		"controllerBackdoor.js",
 		"controllerContracts.js",
 		"controllerHacknet.js",
 		"controllerIpvgo.js",
@@ -22,6 +23,8 @@ export async function main(ns) {
 	for (const script of scripts) {
 		scriptStart(ns, script);
 	}
+
+	await ns.sleep(5000);
 
 	await restoreLayout(ns);
 	await closeExtraTails(ns);

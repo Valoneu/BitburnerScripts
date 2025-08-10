@@ -83,6 +83,7 @@ export function formatRam(n) {
 /** @param {NS} ns */
 export function formatMoney(n) {
 	if (n === Infinity || isNaN(n)) return "N/A";
+	if (n >= 1e15) return (n / 1e15).toFixed(1) + "q";
 	if (n >= 1e12) return (n / 1e12).toFixed(1) + "T";
 	if (n >= 1e9) return (n / 1e9).toFixed(1) + "B";
 	if (n >= 1e6) return (n / 1e6).toFixed(1) + "M";
@@ -170,7 +171,7 @@ export function getAllStocks(ns) {
 }
 
 /** @param {NS} ns */
-function rgbToAnsi256(r, g, b) {
+export function rgbToAnsi256(r, g, b) {
 	const to6cube = (c) => (c < 48 ? 0 : c < 114 ? 1 : Math.floor((c - 35) / 40));
 	const r6 = to6cube(r);
 	const g6 = to6cube(g);
@@ -178,8 +179,16 @@ function rgbToAnsi256(r, g, b) {
 	return 16 + 36 * r6 + 6 * g6 + b6;
 }
 
+export function hexToAnsi(hex) {
+	if (!hex || hex.length !== 7) return "";
+	const [r, g, b] = [hex.slice(1, 3), hex.slice(3, 5), hex.slice(5, 7)].map((c) => parseInt(c, 16));
+	const to6cube = (c) => (c < 48 ? 0 : c < 114 ? 1 : Math.floor((c - 35) / 40));
+	const ansi = 16 + 36 * to6cube(r) + 6 * to6cube(g) + to6cube(b);
+	return `\x1b[38;5;${ansi}m`;
+}
+
 /** @param {NS} ns */
-function interpolateColor(value, max, fromRGB, toRGB) {
+export function interpolateColor(value, max, fromRGB, toRGB) {
 	const ratio = Math.max(0, Math.min(1, value / max));
 	const r = Math.round(fromRGB[0] + ratio * (toRGB[0] - fromRGB[0]));
 	const g = Math.round(fromRGB[1] + ratio * (toRGB[1] - fromRGB[1]));
@@ -198,3 +207,4 @@ export function colorTextInv(text, value, max) {
 	const ansi = interpolateColor(value, max, [0, 255, 0], [255, 0, 0]);
 	return `\x1b[38;5;${ansi}m${text}\x1b[0m`;
 }
+

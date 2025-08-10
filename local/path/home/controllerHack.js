@@ -4,20 +4,20 @@ const HACK = "hackShot.js";
 const GROW = "growShot.js";
 const WEAK = "weakShot.js";
 
-const HACK_PERCENT = 0.10;
+var HACK_PERCENT = 0.95;
 const OVERFILL = 1 + 0.5;
-const BATCH_LIMIT = 75000;
+const BATCH_LIMIT = 90000;
 
 /** @param {NS} ns */
 export async function main(ns) {
 	ns.disableLog("ALL");
 	ns.ui.openTail();
-
+	
 	while (true) {
 		ns.clearLog();
 		let hosts = getHosts(ns);
 
-		var targets = getScoredTargets(ns).filter(s => getServerWeakenTime(ns, s) < (6 * 60 * 1000));
+		var targets = getScoredTargets(ns).filter(s => getServerWeakenTime(ns, s) < (3 * 60 * 1000));
 		let target = ns.getServer(targets[0]);
 		ns.print(`Target: ${target.hostname}`);
 		for (const host of hosts) {
@@ -84,9 +84,9 @@ async function shootBatch(ns, target, hosts) {
 
 		var weakenTime = ns.getWeakenTime(target);
 		var hackThreads = Math.max(1, Math.floor(ns.hackAnalyzeThreads(target, ns.getServerMaxMoney(target) * HACK_PERCENT)));
-		var weaken1Threads = Math.ceil(ns.hackAnalyzeSecurity(hackThreads) / ns.weakenAnalyze(1, server.cpuCores));
-		var growThreads = Math.ceil(ns.growthAnalyze(target, 1 / (1 - HACK_PERCENT)) * OVERFILL, server.cpuCores);
-		var weaken2Threads = Math.ceil((ns.growthAnalyzeSecurity(growThreads) / ns.weakenAnalyze(1, server.cpuCores)) * OVERFILL);
+		var weaken1Threads = Math.max(1, Math.ceil(ns.hackAnalyzeSecurity(hackThreads) / ns.weakenAnalyze(1, server.cpuCores)));
+		var growThreads = Math.max(1, Math.ceil(ns.growthAnalyze(target, 1 / (1 - HACK_PERCENT)) * OVERFILL, server.cpuCores));
+		var weaken2Threads = Math.max(1, Math.ceil((ns.growthAnalyzeSecurity(growThreads) / ns.weakenAnalyze(1, server.cpuCores)) * OVERFILL));
 		var batchRam = ns.getScriptRam(HACK) * hackThreads + ns.getScriptRam(WEAK) * weaken1Threads + ns.getScriptRam(GROW) * growThreads + ns.getScriptRam(WEAK) * weaken2Threads;
 
 		let freeRam = ns.getServerMaxRam(host) - ns.getServerUsedRam(host);
@@ -102,8 +102,11 @@ async function shootBatch(ns, target, hosts) {
 			if (batchcount >= BATCH_LIMIT) break outer;
 		}
 	}
-	ns.print(`Threads: h ${hackThreads}, w ${weaken1Threads}, h ${growThreads}, w ${weaken2Threads} \nRam: ${formatRam(batchRam)} Time: ${formatTime(weakenTime/1000)}`);
-	ns.print(`Expected money: ${formatMoney(expectedmoney)}`);
+	if ((batchcount == BATCH_LIMIT) && (HACK_PERCENT < 0.95)) HACK_PERCENT += 0.05;
+	if ((batchcount < BATCH_LIMIT / 2) && (HACK_PERCENT > 0.05)) HACK_PERCENT -= 0.05;
+
+	ns.print(`Threads: h ${hackThreads}, w ${weaken1Threads}, g ${growThreads}, w ${weaken2Threads} \nRam: ${formatRam(batchRam)} Time: ${formatTime(weakenTime/1000)}`);
+	ns.print(`Money: ${formatMoney(expectedmoney)} Money/s: ${formatMoney(expectedmoney / weakenTime * 1000)} %: ${Math.round(HACK_PERCENT * 1000) / 1000}`);
 	ns.print(`Batches: ${batchcount} Total Ram: ${formatRam(batchRam * batchcount)}`);
 	await ns.sleep(weakenTime + 500);
 }

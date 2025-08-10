@@ -4,7 +4,7 @@ export async function main(ns) {
     ns.ui.openTail();
 
     // Snap any window's tail position/size to multiples of 10
-    const snapToGrid = (val) => Math.round(val / 10) * 10;
+    const snapToGrid = (val) => Math.round(val / 5) * 5;
 
     async function enforceSnap() {
         for (const p of ns.ps()) {
@@ -66,7 +66,7 @@ export async function saveLayout(ns) {
     const layout = [];
     for (const p of ns.ps()) {
         const script = ns.getRunningScript(p.pid);
-        if (script && script.tailProperties) {
+        if ((script && script.tailProperties) && (script.filename !== "tailManager.js")) {
             layout.push({
                 filename: script.filename,
                 args: script.args,

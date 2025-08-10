@@ -46,9 +46,9 @@ export async function main(ns) {
 			printServer(child, [...path, child], newPrefix, i === children.length - 1);
 		}
 	}
+	ns.disableLog("ALL");
+	ns.ui.openTail();
 	while (true) {
-    ns.disableLog("ALL");
-		ns.ui.openTail();
 		ns.clearLog();
 
 		printServer("home", ["home"]);

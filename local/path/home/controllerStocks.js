@@ -1,11 +1,12 @@
 import { getAllStocks, stockSymbols } from "./util.js";
 
 const COMMISSION = 100000;
-const MONEY_BUFFER = 10 * COMMISSION;
+const MONEY_BUFFER = 10000 * COMMISSION;
 const FORECAST_THRESHOLD = {
 	BUY: 0.60,
 	SELL: 0.50,
 };
+
 const SHORTING_ENABLED = false;
 const GROW_WORKER = 'growStock.js';
 const HACK_WORKER = 'hackStock.js';

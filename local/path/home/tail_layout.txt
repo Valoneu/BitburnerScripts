@@ -1,12 +1,12 @@
 [
   {
-    "filename": "controllerHack.js",
+    "filename": "controllerServers.js",
     "args": [],
     "tail": {
-      "x": 1800,
-      "y": 690,
-      "width": 340,
-      "height": 220,
+      "x": 1290,
+      "y": 0,
+      "width": 150,
+      "height": 620,
       "fontSize": 15
     }
   },
@@ -14,10 +14,10 @@
     "filename": "controllerContracts.js",
     "args": [],
     "tail": {
-      "x": 1800,
+      "x": 1810,
       "y": 910,
-      "width": 340,
-      "height": 350,
+      "width": 330,
+      "height": 340,
       "fontSize": 15
     }
   },
@@ -27,8 +27,8 @@
     "tail": {
       "x": 1440,
       "y": 690,
-      "width": 360,
-      "height": 570,
+      "width": 370,
+      "height": 560,
       "fontSize": 15
     }
   },
@@ -44,17 +44,6 @@
     }
   },
   {
-    "filename": "tailManager.js",
-    "args": [],
-    "tail": {
-      "x": 370,
-      "y": 280,
-      "width": 550,
-      "height": 620,
-      "fontSize": 15
-    }
-  },
-  {
     "filename": "clickMap.js",
     "args": [],
     "tail": {
@@ -62,6 +51,28 @@
       "y": 0,
       "width": 300,
       "height": 690,
+      "fontSize": 15
+    }
+  },
+  {
+    "filename": "hud.js",
+    "args": [],
+    "tail": {
+      "x": 2140,
+      "y": 690,
+      "width": 260,
+      "height": 560,
+      "fontSize": 15
+    }
+  },
+  {
+    "filename": "controllerHack.js",
+    "args": [],
+    "tail": {
+      "x": 1810,
+      "y": 690,
+      "width": 330,
+      "height": 220,
       "fontSize": 15
     }
   }

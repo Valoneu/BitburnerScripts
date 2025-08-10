@@ -4,7 +4,7 @@ export async function main(ns) {
 	ns.ui.openTail();
 	while (true) {
 		await attemptAllContracts(ns);
-		await ns.sleep(5 * 60 * 1000); // Check for new contracts every 5 minutes
+		await ns.sleep(5 * 60 * 1000);
 	}
 }
 
@@ -397,36 +397,45 @@ export const solvers = {
 	},
 
 	"HammingCodes: Encoded Binary to Integer": (data) => {
-		// Complex bit manipulation, kept as is.
-		const hamming = data.split("").map(Number);
-		const overallParity = hamming.shift();
-		const p = Math.log2(hamming.length + 1);
+		let bits = data.split("").map(Number);
+		let n = bits.length;
+
+		// indexy parity bitů (včetně pozice 0)
+		let parityPositions = [0];
+		for (let i = 0; 1 << i < n; i++) parityPositions.push(1 << i);
+
+		// vytažení parity bitů v LSB-first pořadí (bez pozice 0)
+		let parityBits = parityPositions.slice(1).map((pos) => bits[pos]);
+		parityBits.reverse();
+		for (let i = 0; i < parityBits.length; i++) bits[parityPositions[i + 1]] = parityBits[i];
+
+		// kontrola parity
 		let errorPos = 0;
-		for (let i = 0; i < p; i++) {
-			const pIndex = 2 ** i - 1;
-			let parity = 0;
-			for (let j = pIndex; j < hamming.length; j++) {
-				if (((j + 1) & (pIndex + 1)) !== 0) {
-					if (hamming[j] === 1) parity++;
-				}
-			}
-			if (parity % 2 !== 0) {
-				errorPos += pIndex + 1;
-			}
+		for (let i = 1; i < parityPositions.length; i++) {
+			let step = parityPositions[i];
+			let count = 0;
+			for (let j = step; j < n; j += step * 2) for (let k = 0; k < step && j + k < n; k++) count += bits[j + k];
+			if (count % 2 !== 0) errorPos += step;
 		}
-		const calculatedOverallParity = hamming.reduce((acc, val) => acc + (val === 1), 0) % 2;
-		if (errorPos > 0 && calculatedOverallParity !== overallParity) {
-			hamming[errorPos - 1] = 1 - hamming[errorPos - 1];
-		} else if (errorPos === 0 && calculatedOverallParity !== overallParity) {
-			return 0; // Uncorrectable 2-bit error
+
+		// celková parita
+		let overallParity = bits[0];
+		let calculatedOverall = bits.slice(1).reduce((a, b) => a + b, 0) % 2;
+
+		// oprava chyby
+		if (errorPos > 0 && overallParity !== calculatedOverall) {
+			bits[errorPos] ^= 1;
+		} else if (errorPos === 0 && overallParity !== calculatedOverall) {
+			return "";
 		}
-		const result = [];
-		for (let i = 0; i < hamming.length; i++) {
-			if (((i + 1) & (i + 2)) !== 0) {
-				result.push(hamming[i]);
-			}
+
+		// vytažení datových bitů
+		let dataBits = [];
+		for (let i = 1; i < n; i++) {
+			if (!parityPositions.includes(i)) dataBits.push(bits[i]);
 		}
-		return parseInt(result.join(""), 2);
+
+		return parseInt(dataBits.join(""), 2);
 	},
 
 	"Proper 2-Coloring of a Graph": ([N, edges]) => {
